@@ -7,7 +7,7 @@ To reproduce the code locally, you need to download the sqlite database and past
 Link to the DB:
 https://drive.google.com/drive/folders/1if1GJLRlihQX44QjLT1uMMVfG7ZyIefd?usp=sharing
 
-NB! Don't use the DB downloaded from https://www.disgenet.org/api/  because it had to be change for this app. 
+NB! Don't use the DB downloaded from https://www.disgenet.org/api/  because it had to be changed for this app. 
 
 **Build the image**: docker-compose build
 
