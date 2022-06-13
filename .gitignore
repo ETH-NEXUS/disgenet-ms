@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+!/app/aaaaaa.db
+
+.disgenet_creds
+disgenet_2020.db
+*.db
+
+.idea
+.vscode
