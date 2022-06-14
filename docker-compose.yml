@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  app:
+  disgenet_ms:
     build:
       context: .
       # args:
@@ -13,8 +13,6 @@ services:
     secrets:
       - disgenet_creds
     env_file: .env
-    entrypoint: ./entrypoint.sh
-
 secrets:
   disgenet_creds:
     file: ./.disgenet_creds

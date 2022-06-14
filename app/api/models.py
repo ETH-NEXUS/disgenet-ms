@@ -26,7 +26,8 @@ class DiseaseAttributes(models.Model):
 
     def class_name(self):
         if len(Disease2Class.objects.filter(diseasenid=self.diseasenid)) > 0:
-            disease_class = Disease2Class.objects.filter(diseasenid=self.diseasenid)[0]
+            disease_class = Disease2Class.objects.filter(
+                diseasenid=self.diseasenid)[0]
             if disease_class and disease_class.diseaseClassName():
                 return disease_class.diseaseClassName()
             else:
@@ -34,7 +35,8 @@ class DiseaseAttributes(models.Model):
 
     def class_(self):
         if len(Disease2Class.objects.filter(diseasenid=self.diseasenid)) > 0:
-            disease_class = Disease2Class.objects.filter(diseasenid=self.diseasenid)[0]
+            disease_class = Disease2Class.objects.filter(
+                diseasenid=self.diseasenid)[0]
             if disease_class and disease_class.diseaseClass():
                 return disease_class.diseaseClass()
             else:
@@ -50,7 +52,8 @@ class DiseaseClass(models.Model):
         db_column='diseaseClassNID', primary_key=True)
     vocabulary = models.CharField(max_length=255)
     diseaseclass = models.CharField(db_column='diseaseClass', max_length=255)
-    diseaseclassname = models.CharField(db_column='diseaseClassName', max_length=255)
+    diseaseclassname = models.CharField(
+        db_column='diseaseClassName', max_length=255)
 
     class Meta:
         managed = False
@@ -80,14 +83,17 @@ class GeneDiseaseNetwork(models.Model):
     nid = models.IntegerField(db_column='NID')
     diseasenid = models.ForeignKey(DiseaseAttributes, models.DO_NOTHING,
                                    db_column='diseaseNID')
-    genenid = models.ForeignKey(GeneAttributes, models.DO_NOTHING, db_column='geneNID')
+    genenid = models.ForeignKey(
+        GeneAttributes, models.DO_NOTHING, db_column='geneNID')
     source = models.CharField(max_length=255, blank=True, null=True)
     association = models.TextField(blank=True, null=True)
-    associationtype = models.TextField(db_column='associationType', blank=True, null=True)
+    associationtype = models.TextField(
+        db_column='associationType', blank=True, null=True)
     sentence = models.TextField(blank=True, null=True)
     pmid = models.IntegerField(blank=True, null=True)
     score = models.TextField(blank=True, null=True)
-    el = models.CharField(db_column='EL', max_length=255, blank=True, null=True)
+    el = models.CharField(db_column='EL', max_length=255,
+                          blank=True, null=True)
     ei = models.TextField(db_column='EI', blank=True,
                           null=True)
     year = models.TextField(blank=True, null=True)
@@ -102,7 +108,8 @@ class VariantAttributes(models.Model):
     s = models.TextField(blank=True, null=True)
     chromosome = models.CharField(blank=True, null=True, max_length=255)
     coord = models.CharField(blank=True, null=True, max_length=255)
-    most_severe_consequence = models.CharField(blank=True, null=True, max_length=255)
+    most_severe_consequence = models.CharField(
+        blank=True, null=True, max_length=255)
     dsi = models.TextField(db_column='DSI', blank=True,
                            null=True)
     dpi = models.TextField(db_column='DPI', blank=True,
@@ -127,7 +134,8 @@ class VariantDiseaseNetwork(models.Model):
                                    db_column='variantNID')
     source = models.CharField(blank=True, null=True, max_length=255)
     association = models.TextField(blank=True, null=True)
-    associationtype = models.TextField(db_column='associationType', blank=True, null=True)
+    associationtype = models.TextField(
+        db_column='associationType', blank=True, null=True)
     sentence = models.TextField(blank=True, null=True)
     pmid = models.TextField(blank=True, null=True)
     score = models.TextField(blank=True, null=True)
@@ -170,7 +178,8 @@ class VariantDiseaseNetwork(models.Model):
 
 
 class VariantGene(models.Model):
-    genenid = models.ForeignKey(GeneAttributes, models.DO_NOTHING, db_column='geneNID')
+    genenid = models.ForeignKey(
+        GeneAttributes, models.DO_NOTHING, db_column='geneNID')
     variantnid = models.ForeignKey(VariantAttributes, models.DO_NOTHING,
                                    db_column='variantNID', primary_key=True)
 
