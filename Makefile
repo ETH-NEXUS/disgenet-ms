@@ -1,8 +1,11 @@
-SHELL=bash
+deploy: .disgenet_creds
+	@docker-compose up -d
 
+redeploy: .disgenet_creds
+	@git pull
+	@docker-compose up -d --build
 
-run_app:
+.disgenet_creds:
 	@scripts/get_creds.sh
-	@docker-compose up --build
 
  

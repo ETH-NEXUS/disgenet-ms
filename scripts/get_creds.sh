@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DISGENET_CREDS="app/.disgenet_creds"
+DISGENET_CREDS=".disgenet_creds"
 
 
 if [ ! -f ${DISGENET_CREDS} ]; then
