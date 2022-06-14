@@ -2,7 +2,7 @@ from wsgiref import headers
 from django.core.management.base import BaseCommand
 import sqlite3
 import requests
-from os.path import exists, basename
+from os.path import exists, basename, join
 from os import environ, remove
 import gzip
 import shutil
@@ -30,7 +30,7 @@ def get_creds():
 def download_db():
     url = environ.get(
         'DISGENET_DB_URL', 'https://www.disgenet.org/static/disgenet_ap1/files/sqlite_downloads/current/disgenet_2020.db.gz')
-    gz_file = basename(urlparse(url).path)
+    gz_file = join('/tmp', basename(urlparse(url).path))
     try:
         opener = build_opener()
         opener.addheaders = [('User-Authorization', get_creds())]

@@ -8,4 +8,7 @@ redeploy: .disgenet_creds
 .disgenet_creds:
 	@scripts/get_creds.sh
 
+docker:
+	@scripts/docker_deploy.sh
+
  

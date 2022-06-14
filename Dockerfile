@@ -10,3 +10,5 @@ USER user
 
 COPY ./app /app
 WORKDIR /app
+
+ENTRYPOINT [ "/app/entrypoint.sh" ]
