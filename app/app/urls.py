@@ -22,7 +22,7 @@ from django.conf import settings
 urlpatterns = [
     path('', api.views.api_root),
     path('api/vda/variants', api.views.VdaList.as_view(), name='vda_list'),
-    path('api/vda/variants/<str:variantid>',
+    path('api/vda/variant/<str:variantid>',
          api.views.Vda.as_view(), name='vda'),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
