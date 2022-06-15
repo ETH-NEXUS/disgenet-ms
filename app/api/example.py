@@ -10,7 +10,7 @@ s = requests.Session()
 
 if api_key:
     s.headers.update({"Authorization": "Bearer %s" % api_key})
-    gda_response = s.get(api_host + '/vda/variant/rs10000770%2Crs1000091588')
+    gda_response = s.get(api_host + '/vda/variant/rs295')
     print(gda_response.json())
 
 if s:

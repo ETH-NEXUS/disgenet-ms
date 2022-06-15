@@ -20,7 +20,7 @@ class CursorSetPagination(CursorPagination):
 class Vda(APIView):
     def get_object(self, variantid):
         try:
-            return VariantAttributes.objects.get(variantid=variantid)
+            return VariantAttributes.objects.filter(variantid=variantid)[0]
         except VariantAttributes.DoesNotExist:
             raise Http404
 
@@ -30,8 +30,9 @@ class Vda(APIView):
     def get(self, request, variantid):
         variant = self.get_object(variantid)
         variantnid = variant.variantnid
-        associations = VariantDiseaseNetwork.objects.filter(variantnid=variantnid)
-        serializer = VariantDiseaseNetworkSerializer(associations, many=True)
+        association = VariantDiseaseNetwork.objects.filter(
+            variantnid=variantnid)[0]
+        serializer = VariantDiseaseNetworkSerializer(association)
         return Response(serializer.data)
 
 

@@ -131,6 +131,7 @@ dmypy.json
 
 .disgenet_creds
 *.db
+*.tsv
 
 .idea
 .vscode

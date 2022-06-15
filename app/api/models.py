@@ -125,6 +125,21 @@ class VariantAttributes(models.Model):
     class Meta:
         db_table = 'variantAttributes'
 
+class Umls(models.Model):
+    diseaseId = models.TextField(primary_key=True,
+                                   db_column='diseaseId')
+    name = models.TextField(blank=True, null=True)
+    type = models.TextField(blank=True, null=True)
+    diseaseClassMSH = models.TextField(blank=True, null=True)
+    diseaseClassNameMSH = models.TextField(blank=True, null=True)
+    hpoClassId = models.TextField(blank=True, null=True)
+    hpoClassName = models.TextField(blank=True, null=True)
+    umlsSemanticTypeId = models.TextField(blank=True, null=True)
+    umlsSemanticTypeName = models.TextField(blank=True, null=True)
+    class Meta:
+        db_table = 'umls'
+
+
 
 class VariantDiseaseNetwork(models.Model):
     nid = models.IntegerField(db_column='NID', primary_key=True)
@@ -142,6 +157,16 @@ class VariantDiseaseNetwork(models.Model):
     ei = models.TextField(db_column='EI', blank=True,
                           null=True)
     year = models.IntegerField(blank=True, null=True)
+
+    def year_initial(self):
+        objects = VariantDiseaseNetwork.objects.filter(
+            variantnid=self.variantnid)
+        return objects[0].year
+
+    def year_final(self):
+        objects = VariantDiseaseNetwork.objects.filter(
+            variantnid=self.variantnid)
+        return objects[objects.count() - 1].year
 
     def disease_name(self):
         return self.diseasenid.diseasename
@@ -167,11 +192,18 @@ class VariantDiseaseNetwork(models.Model):
     def gene_symbol(self):
         return self.variantnid.gene_name()
 
-    def class_name(self):
+    def disease_class_name(self):
         return self.diseasenid.class_name()
 
     def disease_class(self):
         return self.diseasenid.class_()
+
+    def disease_class(self):
+        return self.diseasenid.class_()
+
+    def disease_semantic_type(self):
+        umls_object = Umls.objects.filter(diseaseId=self.diseaseid())[0]
+        return umls_object.umlsSemanticTypeName
 
     class Meta:
         db_table = 'variantDiseaseNetwork'
