@@ -22,5 +22,5 @@ class VariantDiseaseNetworkSerializer(serializers.ModelSerializer):
             'ei',
             'year_initial',
             'year_final',
-            'source'
+            'details'
         )

@@ -27,20 +27,23 @@ class DiseaseAttributes(models.Model):
     def class_name(self):
         if len(Disease2Class.objects.filter(diseasenid=self.diseasenid)) > 0:
             disease_class = Disease2Class.objects.filter(
-                diseasenid=self.diseasenid)[0]
-            if disease_class and disease_class.diseaseClassName():
-                return disease_class.diseaseClassName()
-            else:
-                return ""
+                diseasenid=self.diseasenid)
+            result = []
+            for i in disease_class:
+                result.append(i.diseaseClassName())
+            return result
+
 
     def class_(self):
         if len(Disease2Class.objects.filter(diseasenid=self.diseasenid)) > 0:
             disease_class = Disease2Class.objects.filter(
-                diseasenid=self.diseasenid)[0]
-            if disease_class and disease_class.diseaseClass():
-                return disease_class.diseaseClass()
-            else:
-                return ""
+                diseasenid=self.diseasenid)
+            result = []
+            for i in disease_class:
+                result.append(i.diseaseClass())
+            return result
+
+
 
     class Meta:
         managed = False
@@ -204,6 +207,13 @@ class VariantDiseaseNetwork(models.Model):
     def disease_semantic_type(self):
         umls_object = Umls.objects.filter(diseaseId=self.diseaseid())[0]
         return umls_object.umlsSemanticTypeName
+
+
+    def details(self):
+        return [{"year": object.year, "source": object.source, "sentence": object.sentence} for object in VariantDiseaseNetwork.objects.filter(
+            variantnid=self.variantnid)]
+
+
 
     class Meta:
         db_table = 'variantDiseaseNetwork'
