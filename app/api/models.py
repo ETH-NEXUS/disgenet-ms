@@ -30,7 +30,7 @@ class DiseaseAttributes(models.Model):
                 diseasenid=self.diseasenid)
             result = []
             for i in disease_class:
-                result.append(i.diseaseClassName())
+                result.append(i.diseaseClassName().lstrip())
             return result
 
 
