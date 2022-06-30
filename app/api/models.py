@@ -2,10 +2,10 @@ from django.db import models
 
 
 class Disease2Class(models.Model):
-    diseasenid = models.ForeignKey('DiseaseAttributes', models.DO_NOTHING,
-                                   db_column='diseaseNID', primary_key=True)  # Field name made lowercase.
-    diseaseclassnid = models.ForeignKey('DiseaseClass', models.DO_NOTHING,
-                                        db_column='diseaseClassNID')  # Field name made lowercase.
+    diseasenid = models.OneToOneField('DiseaseAttributes', models.DO_NOTHING,
+                                      db_column='diseaseNID')  # Field name made lowercase.
+    diseaseclassnid = models.OneToOneField('DiseaseClass', models.DO_NOTHING,
+                                           db_column='diseaseClassNID')  # Field name made lowercase.
 
     def diseaseClassName(self):
         return self.diseaseclassnid.diseaseclassname
@@ -33,7 +33,6 @@ class DiseaseAttributes(models.Model):
                 result.append(i.diseaseClassName().lstrip())
             return result
 
-
     def class_(self):
         if len(Disease2Class.objects.filter(diseasenid=self.diseasenid)) > 0:
             disease_class = Disease2Class.objects.filter(
@@ -42,8 +41,6 @@ class DiseaseAttributes(models.Model):
             for i in disease_class:
                 result.append(i.diseaseClass())
             return result
-
-
 
     class Meta:
         managed = False
@@ -128,9 +125,10 @@ class VariantAttributes(models.Model):
     class Meta:
         db_table = 'variantAttributes'
 
+
 class Umls(models.Model):
     diseaseId = models.TextField(primary_key=True,
-                                   db_column='diseaseId')
+                                 db_column='diseaseId')
     name = models.TextField(blank=True, null=True)
     type = models.TextField(blank=True, null=True)
     diseaseClassMSH = models.TextField(blank=True, null=True)
@@ -139,9 +137,9 @@ class Umls(models.Model):
     hpoClassName = models.TextField(blank=True, null=True)
     umlsSemanticTypeId = models.TextField(blank=True, null=True)
     umlsSemanticTypeName = models.TextField(blank=True, null=True)
+
     class Meta:
         db_table = 'umls'
-
 
 
 class VariantDiseaseNetwork(models.Model):
@@ -208,19 +206,16 @@ class VariantDiseaseNetwork(models.Model):
         umls_object = Umls.objects.filter(diseaseId=self.diseaseid())[0]
         return umls_object.umlsSemanticTypeName
 
-
     def details(self):
         return [{"year": object.year, "source": object.source, "sentence": object.sentence} for object in VariantDiseaseNetwork.objects.filter(
             variantnid=self.variantnid)]
-
-
 
     class Meta:
         db_table = 'variantDiseaseNetwork'
 
 
 class VariantGene(models.Model):
-    genenid = models.ForeignKey(
+    genenid = models.OneToOneField(
         GeneAttributes, models.DO_NOTHING, db_column='geneNID')
     variantnid = models.ForeignKey(VariantAttributes, models.DO_NOTHING,
                                    db_column='variantNID', primary_key=True)
