@@ -2,8 +2,8 @@ from django.db import models
 
 
 class Disease2Class(models.Model):
-    diseasenid = models.OneToOneField('DiseaseAttributes', models.DO_NOTHING,
-                                      db_column='diseaseNID')  # Field name made lowercase.
+    diseasenid = models.ForeignKey('DiseaseAttributes', models.DO_NOTHING,
+                                   db_column='diseaseNID', primary_key=True)  # Field name made lowercase.
     diseaseclassnid = models.ForeignKey('DiseaseClass', models.DO_NOTHING,
                                         db_column='diseaseClassNID')  # Field name made lowercase.
 
@@ -217,8 +217,8 @@ class VariantDiseaseNetwork(models.Model):
 class VariantGene(models.Model):
     genenid = models.ForeignKey(
         GeneAttributes, models.DO_NOTHING, db_column='geneNID')
-    variantnid = models.OneToOneField(VariantAttributes, models.DO_NOTHING,
-                                      db_column='variantNID')
+    variantnid = models.ForeignKey(VariantAttributes, models.DO_NOTHING,
+                                   db_column='variantNID', primary_key=True)
 
     def gene_name(self):
         return self.genenid.genename
