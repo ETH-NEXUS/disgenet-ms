@@ -1,6 +1,4 @@
 version: "3"
-volumes:
-  disgenet_data:
 services:
   disgenet_ms:
     build:
