@@ -1,8 +1,6 @@
 #!/usr/bin/env sh
 
 ./manage.py collectstatic --noinput && \
-./manage.py makemigrations app && \
-./manage.py migrate && \
 ./manage.py download_data && \
 gunicorn --reload app.asgi:application \
   --log-file - \
