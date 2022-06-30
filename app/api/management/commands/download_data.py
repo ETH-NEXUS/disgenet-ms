@@ -1,4 +1,3 @@
-from wsgiref import headers
 from django.core.management.base import BaseCommand
 import sqlite3
 from os.path import exists, basename, join
