@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 from friendlylog import colored_logger as log
 from tqdm import tqdm
 from contextlib import closing
+from sys import exit
 
 DB_FILE = '/data/disgenet.db'
 UMLS_FILE = '/data/disease_attr.tsv'
@@ -92,9 +93,14 @@ class Command(BaseCommand):
     help = 'run in order to get the db from the disgenet website'
 
     def handle(self, *args, **kwargs):
-        if download_from_disgenet(environ.get(
-                'DISGENET_DB_URL', 'https://www.disgenet.org/static/disgenet_ap1/files/sqlite_downloads/current/disgenet_2020.db.gz'), DB_FILE):
-            update_db(DB_FILE)
-        if download_from_disgenet(environ.get(
-                'DISGENET_UMLS_URL', 'https://www.disgenet.org/static/disgenet_ap1/files/downloads/disease_mappings_to_attributes.tsv.gz'), UMLS_FILE):
-            create_umls_table(UMLS_FILE)
+        try:
+            if download_from_disgenet(environ.get(
+                    'DISGENET_DB_URL', 'https://www.disgenet.org/static/disgenet_ap1/files/sqlite_downloads/current/disgenet_2020.db.gz'), DB_FILE):
+                update_db(DB_FILE)
+            if download_from_disgenet(environ.get(
+                    'DISGENET_UMLS_URL', 'https://www.disgenet.org/static/disgenet_ap1/files/downloads/disease_mappings_to_attributes.tsv.gz'), UMLS_FILE):
+                create_umls_table(UMLS_FILE)
+        except Exception as ex:
+            log.error("Error during database preparation: {ex}")
+            exit(1)
+        exit(0)
