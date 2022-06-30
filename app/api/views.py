@@ -29,9 +29,9 @@ class Vda(APIView):
 
     def get(self, request, variantid):
         variant = self.get_object(variantid)
-        variantid = variant.variantid
+        variantnid = variant.variantnid
         association = VariantDiseaseNetwork.objects.filter(
-            variantid=variantid)[0]
+            variantnid=variantnid)[0]
         serializer = VariantDiseaseNetworkSerializer(association)
         return Response(serializer.data)
 
