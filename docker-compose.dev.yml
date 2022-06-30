@@ -1,0 +1,8 @@
+version: "3"
+services:
+  disgenet_ms:
+    ports:
+      - "9077:9077"
+    volumes: 
+      - ./app:/app
+      

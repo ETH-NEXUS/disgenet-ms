@@ -1,14 +1,11 @@
-version: "3.9"
+version: "3"
+volumes:
+  disgenet_data:
 services:
   disgenet_ms:
     build:
       context: .
-      # args:
-      #   - DEV=true
-    ports:
-      - "8077:8000"
     volumes: 
-      - ./app:/app
       - ./data:/data
     secrets:
       - disgenet_creds
