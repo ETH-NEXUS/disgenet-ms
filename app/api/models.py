@@ -207,7 +207,7 @@ class VariantDiseaseNetwork(models.Model):
         return umls_object.umlsSemanticTypeName
 
     def details(self):
-        return [{"year": object.year, "source": object.source, "sentence": object.sentence} for object in VariantDiseaseNetwork.objects.filter(
+        return [{"year": object.year, "source": object.source, 'sentence': object.sentence, 'pmid': object.pmid} for object in VariantDiseaseNetwork.objects.filter(
             variantnid=self.variantnid)]
 
     class Meta:
