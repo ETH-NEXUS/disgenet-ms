@@ -58,9 +58,46 @@ def update_db(db_file):
     try:
         with sqlite3.connect(db_file) as connection:
             with closing(connection.cursor()) as cursor:
-                cursor.execute('''UPDATE variantDiseaseNetwork
-                        SET year = null
-                        WHERE year = 'NA';''')
+                # We want to have null instead of NA in the year field
+                cursor.execute('''
+                    UPDATE variantDiseaseNetwork
+                    SET year = null
+                    WHERE year = 'NA'
+                    ''')
+                # Because the pattern of a combined foreign key looks different in django
+                # we adjust disease2class and variantGene accordingly
+                cursor.execute('''
+                    create table disease2class_copy (
+                    id integer primary key autoincrement, 
+                    diseaseNID int,
+                    diseaseClassNID int,
+                    FOREIGN KEY (diseaseNID) REFERENCES diseaseAttributes(diseaseNID),
+                    FOREIGN KEY (diseaseClassNID) REFERENCES diseaseClass(diseaseClassNID))
+                    ''')
+                cursor.execute('''
+                    insert into disease2class_copy (diseaseNID, diseaseClassNID) 
+                    select diseaseNID, diseaseClassNID from disease2class
+                    ''')
+                cursor.execute('drop table disease2class')
+                cursor.execute('''
+                    alter table disease2class_copy rename to disease2class
+                    ''')
+                cursor.execute('''
+                    create table variantGene_copy (
+                    id integer primary key autoincrement, 
+                    geneNID int,
+                    variantNID int,
+                    FOREIGN KEY (geneNID) REFERENCES geneAttributes(geneNID),
+                    FOREIGN KEY (variantNID) REFERENCES variantAttributes(variantNID))
+                    ''')
+                cursor.execute('''
+                    insert into variantGene_copy (geneNID, variantNID) 
+                    select geneNID, variantNID from variantGene
+                    ''')
+                cursor.execute('drop table variantGene')
+                cursor.execute('''
+                    alter table variantGene_copy rename to variantGene
+                    ''')
                 connection.commit()
         log.info(f"DONE updating db ({db_file}).")
     except Exception as ex:
@@ -75,11 +112,19 @@ def create_umls_table(umls_file):
                         for line in f.readlines()[1:]]
         with sqlite3.connect(DB_FILE) as connection:
             with closing(connection.cursor()) as cursor:
-                cursor.execute('''CREATE TABLE umls (diseaseId text, name text,	type text,
-                    diseaseClassMSH text, diseaseClassNameMSH text, 
-                    hpoClassId text,	hpoClassName text,
-                    doClassId text, doClassName text, umlsSemanticTypeId text, umlsSemanticTypeName text);
-                    
+                cursor.execute('''CREATE TABLE umls (
+                        diseaseId text, 
+                        name text,	
+                        type text,
+                        diseaseClassMSH text, 
+                        diseaseClassNameMSH text, 
+                        hpoClassId text,	
+                        hpoClassName text,
+                        doClassId text, 
+                        doClassName text, 
+                        umlsSemanticTypeId text, 
+                        umlsSemanticTypeName text
+                    )
                     ''')
                 cursor.executemany(
                     'INSERT INTO umls VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', new_data)
