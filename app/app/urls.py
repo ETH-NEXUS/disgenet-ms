@@ -14,15 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-import api.views
+from django.urls import path, include
+from api.views import Vda
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'vda/variants', Vda, basename='vda')
 
 urlpatterns = [
-    path('', api.views.api_root),
-    path('api/vda/variants', api.views.VdaList.as_view(), name='vda_list'),
-    path('api/vda/variant/<str:variantid>',
-         api.views.Vda.as_view(), name='vda'),
+    path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
