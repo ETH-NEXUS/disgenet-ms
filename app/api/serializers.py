@@ -44,6 +44,9 @@ class VariantAttributesSerializer(serializers.ModelSerializer):
     evidences = VariantDiseaseNetworkSerializer(
         source='variantdiseasenetwork_set', many=True)
 
+    # Because the model is setup diffently from the output we'd like to see
+    # we go convert evidences with diseases and aggregate the evidences into
+    # the diseases.
     def to_representation(self, instance):
         data = super(serializers.ModelSerializer,
                      self).to_representation(instance)
