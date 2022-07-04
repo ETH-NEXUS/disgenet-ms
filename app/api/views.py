@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Prefetch
 
 
-class Vda(viewsets.ModelViewSet):
+class Vda(viewsets.ReadOnlyModelViewSet):
     serializer_class = VariantAttributesSerializer
     filter_backends = (DjangoFilterBackend,)
     lookup_field = 'variantid'
