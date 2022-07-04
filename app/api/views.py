@@ -1,53 +1,36 @@
-from rest_framework.generics import ListAPIView
-from rest_framework.reverse import reverse
-from api.models import VariantAttributes
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from api.models import VariantDiseaseNetwork
-from api.serializers import VariantDiseaseNetworkSerializer
-from rest_framework.pagination import CursorPagination
+from rest_framework import viewsets
+from api.models import Variantattributes, Variantdiseasenetwork, Diseaseattributes, Disease2Class, Geneattributes, Genediseasenetwork
+from api.serializers import VariantAttributesSerializer
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Prefetch
 
 
-class CursorSetPagination(CursorPagination):
-    page_size = 5
-    page_size_query_param = 'page_size'
-    ordering = 'nid'
-
-
-class Vda(APIView):
-    def get_object(self, variantid):
-        try:
-            variant_attributes = VariantAttributes.objects.get(
-                variantid=variantid)
-            return variant_attributes
-        except VariantAttributes.DoesNotExist:
-            raise Http404
-
+class Vda(viewsets.ModelViewSet):
+    serializer_class = VariantAttributesSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('year', 'source', 'score', 'ei', 'pmid')
+    lookup_field = 'variantid'
 
-    def get(self, request, variantid):
-        variant = self.get_object(variantid)
-        variantnid = variant.variantnid
-        association = VariantDiseaseNetwork.objects.get(
-            variantnid=variantnid)
-        serializer = VariantDiseaseNetworkSerializer(association)
-        return Response(serializer.data)
-
-
-class VdaList(ListAPIView):
-    queryset = VariantDiseaseNetwork.objects.all()
-    serializer_class = VariantDiseaseNetworkSerializer
-    pagination_class = CursorSetPagination
-    filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('year', 'source', 'score', 'ei', 'pmid')
-
-
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'vdaList': reverse('vda_list', request=request, format=format),
-    })
+    def get_queryset(self):
+        return Variantattributes.objects.prefetch_related(
+            Prefetch(
+                'variantdiseasenetwork_set',
+                queryset=Variantdiseasenetwork.objects
+                .prefetch_related(
+                    Prefetch(
+                        'diseasenid',
+                        queryset=Diseaseattributes.objects.prefetch_related(
+                            Prefetch(
+                                'disease2class_set',
+                                queryset=Disease2Class.objects
+                                .select_related('diseaseclassnid')
+                            ),
+                            Prefetch(
+                                'genediseasenetwork_set',
+                                queryset=Genediseasenetwork.objects
+                                .select_related('genenid')
+                            )
+                        )
+                    )
+                )
+            )
+        )
