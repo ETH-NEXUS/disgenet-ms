@@ -1,8 +1,5 @@
-from typing import OrderedDict
-from django.forms import SlugField
 from rest_framework import serializers
-from api.models import Variantdiseasenetwork, Variantattributes, Diseaseattributes, Disease2Class, Diseaseclass
-from django .core.exceptions import ObjectDoesNotExist
+from api.models import Variantdiseasenetwork, Variantattributes, Diseaseattributes
 
 
 class DiseaseAttributesSerializer(serializers.ModelSerializer):
