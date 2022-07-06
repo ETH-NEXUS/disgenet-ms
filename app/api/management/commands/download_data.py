@@ -31,14 +31,15 @@ def download_from_disgenet(url, target, overwrite=False):
     if overwrite or not exists(target):
         gz_file = join('/tmp', basename(urlparse(url).path))
         try:
-            opener = build_opener()
-            opener.addheaders = [('User-Authorization', get_creds())]
-            install_opener(opener)
-            log.info(f"Downloading {target} from {url}...")
-            with TqdmUpTo(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc=gz_file) as t:
-                urlretrieve(url,
-                            filename=gz_file,
-                            reporthook=t.update_to)
+            if not exists(gz_file):
+                opener = build_opener()
+                opener.addheaders = [('User-Authorization', get_creds())]
+                install_opener(opener)
+                log.info(f"Downloading {target} from {url}...")
+                with TqdmUpTo(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc=gz_file) as t:
+                    urlretrieve(url,
+                                filename=gz_file,
+                                reporthook=t.update_to)
             log.info(f"Gunzip {gz_file} to {target}...")
             with gzip.open(gz_file, 'rb') as gzf:
                 with open(target, 'wb') as dbf:
