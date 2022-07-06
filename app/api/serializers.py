@@ -72,10 +72,11 @@ class VariantAttributesSerializer(serializers.ModelSerializer):
                         "year": evidence.get('year')
                     }
                 )
-                temp[diseaseid]['year_initial'] = min(
-                    temp[diseaseid]['year_initial'], evidence.get('year'))
-                temp[diseaseid]['year_final'] = max(
-                    temp[diseaseid]['year_final'], evidence.get('year'))
+                if evidence.get('year'):
+                    temp[diseaseid]['year_initial'] = min(
+                        temp[diseaseid]['year_initial'], evidence.get('year'))
+                    temp[diseaseid]['year_final'] = max(
+                        temp[diseaseid]['year_final'], evidence.get('year'))
             else:
                 [diseaseid]['evidences'] = None
         del data['evidences']
