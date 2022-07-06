@@ -62,19 +62,22 @@ class VariantAttributesSerializer(serializers.ModelSerializer):
                     "year_final": evidence.get('year'),
                     "evidences": []
                 }
-            temp[diseaseid]['evidences'].append(
-                {
-                    "source": evidence.get('source'),
-                    "sentence": evidence.get('sentence'),
-                    "pmid": evidence.get('pmid'),
-                    "year": evidence.get('year')
-                }
-            )
-            if evidence.get('year'):
+            # Check if there is an evidence
+            if evidence.get('source'):
+                temp[diseaseid]['evidences'].append(
+                    {
+                        "source": evidence.get('source'),
+                        "sentence": evidence.get('sentence'),
+                        "pmid": evidence.get('pmid'),
+                        "year": evidence.get('year')
+                    }
+                )
                 temp[diseaseid]['year_initial'] = min(
                     temp[diseaseid]['year_initial'], evidence.get('year'))
                 temp[diseaseid]['year_final'] = max(
                     temp[diseaseid]['year_final'], evidence.get('year'))
+            else:
+                [diseaseid]['evidences'] = None
         del data['evidences']
         data['diseases'] = []
         for t in temp.values():
