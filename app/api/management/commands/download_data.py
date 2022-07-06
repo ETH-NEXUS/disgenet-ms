@@ -42,7 +42,7 @@ def download_from_disgenet(url, target, overwrite=False):
                                 reporthook=t.update_to)
             log.info(f"Gunzip {gz_file} to {target}...")
             with gzip.open(gz_file, 'rb') as gzf:
-                with open(target, 'wb') as dbf:
+                with open(target, 'wb+') as dbf:
                     shutil.copyfileobj(gzf, dbf)
             remove(gz_file)
             log.info(f"DONE downloading {target}.")
