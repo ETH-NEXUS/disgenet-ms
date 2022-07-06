@@ -20,8 +20,13 @@ from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework.routers import DefaultRouter
 
+
+
+
 router = DefaultRouter()
 router.register(r'vda/variants', Vda, basename='vda')
+
+
 
 urlpatterns = [
     path('api/', include(router.urls)),
