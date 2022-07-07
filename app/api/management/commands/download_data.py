@@ -1,15 +1,16 @@
-from django.core.management.base import BaseCommand
-import sqlite3
-from os.path import exists, basename, join
-from os import environ, remove
 import gzip
 import shutil
-from urllib.request import urlretrieve, build_opener, install_opener
+import sqlite3
+from contextlib import closing
+from os import environ, remove
+from os.path import exists, basename, join
+from sys import exit
 from urllib.parse import urlparse
+from urllib.request import urlretrieve, build_opener, install_opener
+
+from django.core.management.base import BaseCommand
 from friendlylog import colored_logger as log
 from tqdm import tqdm
-from contextlib import closing
-from sys import exit
 
 DB_FILE = '/data/disgenet.db'
 UMLS_FILE = '/data/disease_attr.tsv'
@@ -56,6 +57,7 @@ def download_from_disgenet(url, target, overwrite=False):
 
 def update_db(db_file):
     log.info(f"Updating db ({db_file})...")
+
     try:
         with sqlite3.connect(db_file) as connection:
             with closing(connection.cursor()) as cursor:
@@ -129,8 +131,37 @@ def create_umls_table(umls_file):
                     ''')
                 cursor.executemany(
                     'INSERT INTO umls VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', new_data)
+                log.info(f"DONE creating umls table.")
+                log.info(f"Updating table diseaseAttributes.")
+
+                cursor.execute('''CREATE TABLE diseaseAttributes_copy1 AS
+                SELECT  umls.umlsSemanticTypeId,
+                umls.umlsSemanticTypeName,
+                diseaseAttributes.diseaseId,
+                diseaseAttributes.diseaseNID,
+                diseaseAttributes.diseaseName,
+                diseaseAttributes.type FROM diseaseAttributes
+                LEFT JOIN umls
+                ON diseaseAttributes.diseaseId = umls.diseaseId ''')
+
+                cursor.execute('''CREATE TABLE diseaseAttributes_copy2 (
+                umlsSemanticTypeId text,
+                umlsSemanticTypeName text,
+                diseaseId text,
+                diseaseNID integer,
+                diseaseName text,
+                type text
+                    )''')
+                cursor.execute('''insert into diseaseAttributes_copy2 (diseaseId, diseaseNID, diseaseName, type, umlsSemanticTypeId, umlsSemanticTypeName )
+                                                select diseaseId, diseaseNID, diseaseName, type, umlsSemanticTypeId, umlsSemanticTypeName from diseaseAttributes_copy1''')
+
+
+                cursor.execute('''drop table diseaseAttributes''')
+                cursor.execute('''drop table diseaseAttributes_copy1''')
+                cursor.execute('''alter table diseaseAttributes_copy2 rename to diseaseAttributes''')
+
                 connection.commit()
-        log.info(f"DONE creating umls table.")
+
     except Exception as ex:
         log.error(f"Error during table umls creation: {ex}")
 
@@ -141,10 +172,14 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         try:
             if download_from_disgenet(environ.get(
-                    'DISGENET_DB_URL', 'https://www.disgenet.org/static/disgenet_ap1/files/sqlite_downloads/current/disgenet_2020.db.gz'), DB_FILE):
+                    'DISGENET_DB_URL',
+                    'https://www.disgenet.org/static/disgenet_ap1/files/sqlite_downloads/current/disgenet_2020.db.gz'),
+                    DB_FILE):
                 update_db(DB_FILE)
             if download_from_disgenet(environ.get(
-                    'DISGENET_UMLS_URL', 'https://www.disgenet.org/static/disgenet_ap1/files/downloads/disease_mappings_to_attributes.tsv.gz'), UMLS_FILE):
+                    'DISGENET_UMLS_URL',
+                    'https://www.disgenet.org/static/disgenet_ap1/files/downloads/disease_mappings_to_attributes.tsv.gz'),
+                    UMLS_FILE):
                 create_umls_table(UMLS_FILE)
         except Exception as ex:
             log.error("Error during database preparation: {ex}")

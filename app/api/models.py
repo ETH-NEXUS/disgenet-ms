@@ -30,6 +30,11 @@ class Diseaseattributes(models.Model):
     # Field name made lowercase.
     diseasename = models.CharField(db_column='diseaseName', max_length=255)
     type = models.CharField(max_length=255)
+    umlssemantictypeid = models.TextField(
+        db_column='umlsSemanticTypeId', blank=True, null=True)
+    # Field name made lowercase.
+    umlssemantictypename = models.TextField(
+        db_column='umlsSemanticTypeName', blank=True, null=True)
 
     class Meta:
         managed = False
@@ -80,10 +85,10 @@ class Genediseasenetwork(models.Model):
     nid = models.AutoField(db_column='NID', primary_key=True)
     # Field name made lowercase.
     diseasenid = models.ForeignKey(
-        Diseaseattributes, models.DO_NOTHING, db_column='diseaseNID')
+        Diseaseattributes, on_delete=models.DO_NOTHING, db_column='diseaseNID', null=True, to_field='diseasenid')
     # Field name made lowercase.
     genenid = models.ForeignKey(
-        Geneattributes, models.DO_NOTHING, db_column='geneNID')
+        Geneattributes, models.DO_NOTHING, db_column='geneNID', null=True)
     source = models.CharField(max_length=255, blank=True, null=True)
     # This field type is a guess.
     association = models.TextField(blank=True, null=True)
@@ -191,7 +196,8 @@ class Variantdiseasenetwork(models.Model):
 
 class Variantgene(models.Model):
     # Field name made lowercase.
-    genenid = models.AutoField(db_column='geneNID', primary_key=True)
+    genenid = models.ForeignKey(
+        Geneattributes, models.DO_NOTHING, db_column='geneNID')
     # Field name made lowercase.
     variantnid = models.ForeignKey(
         Variantattributes, models.DO_NOTHING, db_column='variantNID')

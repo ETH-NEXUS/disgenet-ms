@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from api.models import Variantattributes, Variantdiseasenetwork, Diseaseattributes, Disease2Class, Geneattributes, Genediseasenetwork
+from api.models import Variantattributes, Variantdiseasenetwork, Diseaseattributes, Disease2Class, Variantgene, Genediseasenetwork
 from api.serializers import VariantAttributesSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Prefetch
@@ -32,5 +32,10 @@ class Vda(viewsets.ReadOnlyModelViewSet):
                         )
                     )
                 )
+            ),
+            Prefetch(
+                'variantgene_set',
+                queryset=Variantgene.objects
+                .select_related('genenid')
             )
         )

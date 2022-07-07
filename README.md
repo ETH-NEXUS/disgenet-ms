@@ -53,7 +53,7 @@ docker-compose up -d
 
 ### Example url for a single VDA 
 ```
-/api/vda/variant/rs295
+/api/vda/variants/rs295
 ```
 
 ### Filter parameters
