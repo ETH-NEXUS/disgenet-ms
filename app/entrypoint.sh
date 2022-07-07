@@ -10,8 +10,9 @@ if [ "$DEV" == "True" ]; then
 else
   gunicorn app.asgi:application \
     --log-file - \
-    -k uvicorn.workers.UvicornWorker \
-    -w 8 \
-    -b 0.0.0.0:${PORT}
+    --workers 4 \
+    --worker-class uvicorn.workers.UvicornWorker \
+    --timeout 300 \
+    --bind 0.0.0.0:${PORT}
 fi
 
