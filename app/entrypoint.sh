@@ -3,6 +3,8 @@
 PORT=9077
 
 ./manage.py collectstatic --noinput && \
+./manage.py makemigrations api && \
+./manage.py migrate && \
 ./manage.py download_data
 
 if [ "$DEV" == "True" ]; then
